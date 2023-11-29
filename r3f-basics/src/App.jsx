@@ -2,69 +2,47 @@
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
 import { Canvas } from '@react-three/fiber';
-import { useRef, useState } from 'react';
-import { Cube } from './components/Cube';
+import { useRef } from 'react';
+import { OrbitControls, useHelper } from '@react-three/drei';
+import { DirectionalLightHelper } from 'three';
+import { Tesseract } from './components/Tesseract';
 import { Sphere } from './components/Sphere';
-import { rotateX, rotateY, rotateXY, translateZ } from './animations';
+import { rotateY } from './animations';
 import './App.css'
 
+const Scene = () => {
+  const directionalLightRef = useRef();
 
-const Tesseract = () => {
-  const[isHovered, setIsHovered] = useState(false);
-  const speed = isHovered ? 2 : 1;
-  const ref = useRef();
-
-  translateZ(ref, speed);
+  useHelper(directionalLightRef, DirectionalLightHelper, 0.5, 'white');
 
   return (
-    <group 
-      ref={ref}
-      onPointerEnter={(e) => (e.stopPropagation(), setIsHovered(true))}
-      onPointerLeave={() => setIsHovered(false)}
-    >
-      <Cube 
-        position={[0, 0, 0]} 
-        size={[1, 1, 1]} 
-        color={'teal'}
-        animation={rotateX}
-        speed={speed}
+    <>
+      <directionalLight 
+        position={[-1, 1, 2]} 
+        intensity={0.8}
+        ref={directionalLightRef}
       />
+      <ambientLight intensity={0.1} />
 
-      <Cube 
-        position={[0, 0, 0]} 
-        size={[1, 1, 1]} 
-        color={'teal'}
+      {/* <Tesseract /> */}
+
+      <Sphere 
+        position={[0, 0, 0]}
+        size={[1, 30, 30]}
+        color={'orange'}
         animation={rotateY}
-        speed={speed}
       />
+      
+      <OrbitControls />
 
-      <Cube 
-        position={[0, 0, 0]} 
-        size={[1.5, 1.5, 1.5]} 
-        color={'teal'}
-        animation={rotateXY}
-        speed={speed}
-      />
-    </group>
+    </>
   )
 }
 
 const App = () => {
   return (
     <Canvas>
-      <directionalLight position={[0, 0, 2]} />
-      <ambientLight intensity={0.1} />
-
-      <Tesseract />
-
-      {/* <Sphere 
-        position={[0, 0, 0]}
-        size={[1, 30, 30]}
-        color={'orange'}
-        animation={rotateY}
-      /> */}
-      
-
+      <Scene />
     </Canvas>
   )
 }
